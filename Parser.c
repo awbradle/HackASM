@@ -3,6 +3,13 @@
 #include <string.h>
 #include <ctype.h>
 
+char* cleanLine(char* in);
+void getDest(char* in, char* out);
+void getComp(char* in, char* out);
+void getJump(char* in, char* out);
+void getSymbolValue(char* in, char* out);
+enum CommandType getCommandType(char* in);
+struct ParsedCommand* getParsedCommand(char* in);
 
 enum CommandType {
 	C_TYPE,
@@ -13,24 +20,19 @@ enum CommandType {
 struct ParsedCommand {
 	enum CommandType ct;
 	char* symbol;
-	char symbolValue[6];
+	char memLocation[6];
 	char dest[4];
 	char comp[4];
 	char jump[4];
 };
 
-char* cleanLine(char* in);
-void getDest(char* in, char* out);
-void getComp(char* in, char* out);
-void getJump(char* in, char* out);
-enum CommandType getCommandType(char* in);
-struct ParsedCommand* getParsedCommand(char* in);
 
-int main(int argc, char* argv[])
+int main()
 {
-	printf("%ld\n", strlen("\n"));
-}	
-		
+	return 0;
+}
+
+//Cleans a line by removing whitespace.
 char* cleanLine(char* in)
 {
 	int size = strlen(in);
@@ -50,12 +52,11 @@ char* cleanLine(char* in)
 		out[outsize++] = in[i];
 		
 	}
-	if(in[size - 1] == '\n' && outsize > 0)
-		out[outsize++] = '\n';
 	out[outsize] = '\0';
 	return out;
 }
 
+//Takes a clean line and returns the destination token
 void getDest(char* in, char* out)
 {
 	char *destExists = strchr(in, '=');
@@ -73,6 +74,7 @@ void getDest(char* in, char* out)
 	out[i] = '\0';
 }
 
+//Takes a clean line and returns the computation token
 void getComp(char* in, char* out)
 {
 	char *destExists = strchr(in, '=');
@@ -82,7 +84,7 @@ void getComp(char* in, char* out)
 	while(1)
 	{
 		out[j++] = in[i++];
-		if(in[i] == '\0' || in[i] == '\n' || in[i] == ';')
+		if(in[i] == '\0' || in[i] == ';')
 			break;
 		
 	}
@@ -90,6 +92,7 @@ void getComp(char* in, char* out)
 	return;
 }
 
+//Takes a clean line and returns a jump token.
 void getJump(char* in, char* out)
 {
 	char *jumpExists = strchr(in, ';');
@@ -104,23 +107,34 @@ void getJump(char* in, char* out)
 	out[3] = '\0'; 
 }
 
+//Takes a clean line and returns the memory address.
+void getSymbolValue(char* in, char* out)
+{
+	strncpy(out,in+1, 5);
+	out[5] = '\0';
+}
+
+//Takes a clean line and returns a ParsedCommand struct
 struct ParsedCommand* getParsedCommand(char* in)
 {
 	struct ParsedCommand* p = malloc(sizeof(struct ParsedCommand));
 	p->ct = getCommandType(in);
+	
+	if(p->ct == A_TYPE)
+	{
+		p->symbol = NULL;
+		getSymbolValue(in, p->memLocation);
+	}
 	if(p->ct == C_TYPE)
 	{
 		getDest(in, p->dest);
 		getComp(in, p->comp);
 		getJump(in, p->jump);
 	}
-	else if(p->ct == A_TYPE)
-	{
-	 return p;
-	}
 	return p;	
 }
 
+//Takes a clean line and returns the CommandType
 enum CommandType getCommandType(char* in)
 {
 	if (in[0] == '@')
