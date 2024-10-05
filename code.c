@@ -1,20 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
-void getJump(char* in, char* out);
-void getComp(char* in, char* out);
-void getAddress(char* in, char* out);
-void getABinary(char* addr, char* out); 
-void getCBinary(char* dest, char* comp, char* jump, char* out);
-
-int main()
-{
-}
+#include "code.h"
+#include "parser.h"
 
 //takes a dest token and returns binary string
-void getDest(char* in, char* out)
+void getBinDest(char* in, char* out)
 {
 	strcpy(out, "000");
 	if(in == NULL || strcmp(in, "") == 0)
@@ -35,7 +23,7 @@ void getDest(char* in, char* out)
 }
 
 //takes a jump token and returns binary string
-void getJump(char* in, char* out)
+void getBinJump(char* in, char* out)
 {
 	if(in == NULL || strcmp(in, "") == 0)
 		strcpy(out, "000");
@@ -56,7 +44,7 @@ void getJump(char* in, char* out)
 }
 
 //takes a comp token and returns binary string
-void getComp(char* in, char* out)
+void getBinComp(char* in, char* out)
 {
 	if (strchr(in, 'M') == NULL)
 	{
@@ -123,7 +111,7 @@ void getComp(char* in, char* out)
 }
 
 //takes and address and returns binary string
-void getAddress(char* in, char* out)
+void getBinAddress(char* in, char* out)
 {
 	int n = atoi(in);
 	int i;
@@ -137,18 +125,28 @@ void getAddress(char* in, char* out)
 	}
 	out[15] = '\0';
 }
+
 void getABinary(char* addr, char* out)
 {
 	out[0] = '0';
-	getAddress(addr, out+1);
+	getBinAddress(addr, out+1);
 }
+
 void getCBinary(char* dest, char* comp, char* jump, char* out)
 {
 	out[0] = out[1] = out[2] = '1';
-	getComp(comp, out+3);
-	getDest(dest, out+10);
-	getJump(jump, out+13);
-}	
+	getBinComp(comp, out+3);
+	getBinDest(dest, out+10);
+	getBinJump(jump, out+13);
+}
+
+void getBinOut(struct ParsedCommand* p, char* out)
+{
+	if(p->ct == C_TYPE)
+		getCBinary(p->dest, p->comp, p-> jump, out);
+	else
+		getABinary(p->memLocation, out);
+}
 
 
 

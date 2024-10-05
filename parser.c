@@ -1,42 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
-char* cleanLine(char* in);
-void getDest(char* in, char* out);
-void getComp(char* in, char* out);
-void getJump(char* in, char* out);
-void getSymbolValue(char* in, char* out);
-enum CommandType getCommandType(char* in);
-struct ParsedCommand* getParsedCommand(char* in);
-
-enum CommandType {
-	C_TYPE,
-	A_TYPE,
-	L_TYPE
-};
-
-struct ParsedCommand {
-	enum CommandType ct;
-	char* symbol;
-	char memLocation[6];
-	char dest[4];
-	char comp[4];
-	char jump[4];
-};
-
-
-int main()
-{
-	return 0;
-}
+#include "parser.h"
 
 //Cleans a line by removing whitespace.
-char* cleanLine(char* in)
+char* getCleanLine(char* in)
 {
 	int size = strlen(in);
-	char *out = malloc( sizeof(char) * ( size + 1 ) );
+	char* out = malloc( sizeof(char) * ( size + 1 ) );
 	int i = 0;
 	int outsize = 0;
 	for(i = 0; i < size; i++)
@@ -59,7 +27,7 @@ char* cleanLine(char* in)
 //Takes a clean line and returns the destination token
 void getDest(char* in, char* out)
 {
-	char *destExists = strchr(in, '=');
+	char* destExists = strchr(in, '=');
 	if(destExists == NULL)
 	{
 		out[0] = '\0';
@@ -77,7 +45,7 @@ void getDest(char* in, char* out)
 //Takes a clean line and returns the computation token
 void getComp(char* in, char* out)
 {
-	char *destExists = strchr(in, '=');
+	char* destExists = strchr(in, '=');
 	int i = 0,j = 0;
 	if (destExists != NULL)
 		i = destExists - in + 1;
@@ -95,7 +63,7 @@ void getComp(char* in, char* out)
 //Takes a clean line and returns a jump token.
 void getJump(char* in, char* out)
 {
-	char *jumpExists = strchr(in, ';');
+	char* jumpExists = strchr(in, ';');
 	if(jumpExists == NULL)
 	{
 		out[0] = '\0';
@@ -142,4 +110,9 @@ enum CommandType getCommandType(char* in)
 	if (in[0] == '(')
 		return L_TYPE;
 	return C_TYPE;
+}
+
+void freeParsedCommand(struct ParsedCommand* p)
+{
+	free(p);
 }
