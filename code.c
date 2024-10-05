@@ -61,7 +61,7 @@ void getBinComp(char* in, char* out)
 		else if(strcmp(in, "!D") == 0)
 			strcpy(out, "0001101");
 		else if(strcmp(in, "!A") == 0)
-			strcpy(out, "0110011");
+			strcpy(out, "0110001");
 		else if(strcmp(in, "-D") == 0)
 			strcpy(out, "0001111");
 		else if(strcmp(in, "-A") == 0)
@@ -90,7 +90,7 @@ void getBinComp(char* in, char* out)
 		if(strcmp(in, "M") == 0)
 			strcpy(out, "1110000");
 		else if(strcmp(in, "!M") == 0)
-			strcpy(out, "1110011");
+			strcpy(out, "1110001");
 		else if(strcmp(in, "-M") == 0)
 			strcpy(out, "1110011");
 		else if(strcmp(in, "M+1") == 0)

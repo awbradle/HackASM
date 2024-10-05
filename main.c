@@ -47,7 +47,6 @@ int main(int argc, char* argv[])
 	{
 		curr = (struct list*) malloc(sizeof(struct list));
 		cleanLine = getCleanLine(inLine);
-		printf("%s, %d\n", cleanLine, strlen(cleanLine));
 		if(cleanLine == NULL || curr == NULL)
 		{
 			fprintf(stderr, "error: malloc failed\n");
@@ -66,7 +65,6 @@ int main(int argc, char* argv[])
 	char binOut[17];
 	while(head != NULL)
 	{
-		//printf( "%s", (head->line));
 		p = getParsedCommand(head->line);
 		getBinOut(p, binOut);
 		fprintf(out, "%s\n", binOut);
@@ -76,9 +74,8 @@ int main(int argc, char* argv[])
 			head = head->next;
 		free(curr->line);
 		free(curr);
+		free(p);
 	}
-	
-	printf("%s %s\n", argv[1], outName);
 	fclose(in);
 	fclose(out);
 	return 0;
