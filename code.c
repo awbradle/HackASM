@@ -1,7 +1,7 @@
 #include "code.h"
 #include "parser.h"
 
-//takes a dest token and returns binary string
+//Takes a dest token and returns binary string
 void getBinDest(char* in, char* out)
 {
 	strcpy(out, "000");
@@ -22,7 +22,7 @@ void getBinDest(char* in, char* out)
 	}
 }
 
-//takes a jump token and returns binary string
+//Takes a jump token and returns binary string
 void getBinJump(char* in, char* out)
 {
 	if(in == NULL || strcmp(in, "") == 0)
@@ -43,7 +43,7 @@ void getBinJump(char* in, char* out)
 		strcpy(out, "111");
 }
 
-//takes a comp token and returns binary string
+//Takes a comp token and returns binary string
 void getBinComp(char* in, char* out)
 {
 	if (strchr(in, 'M') == NULL)
@@ -110,7 +110,7 @@ void getBinComp(char* in, char* out)
 	}
 }
 
-//takes and address and returns binary string
+//Takes an address and returns binary string
 void getBinAddress(char* in, char* out)
 {
 	int n = atoi(in);
@@ -125,13 +125,14 @@ void getBinAddress(char* in, char* out)
 	}
 	out[15] = '\0';
 }
-
+//Outputs binary A command
 void getABinary(char* addr, char* out)
 {
 	out[0] = '0';
 	getBinAddress(addr, out+1);
 }
 
+//Outputs a binary C command
 void getCBinary(char* dest, char* comp, char* jump, char* out)
 {
 	out[0] = out[1] = out[2] = '1';
@@ -140,6 +141,7 @@ void getCBinary(char* dest, char* comp, char* jump, char* out)
 	getBinJump(jump, out+13);
 }
 
+//Outputs a binary command from a ParsedCommand struct
 void getBinOut(struct ParsedCommand* p, char* out)
 {
 	if(p->ct == C_TYPE)

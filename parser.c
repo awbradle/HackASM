@@ -1,5 +1,9 @@
 #include "parser.h"
 
+struct symbolList* symbolListHead = NULL; //Symbol Table
+struct symbolList* symbolListTail = NULL; //Symbol Table
+int nextMem = 16;
+
 //Cleans a line by removing whitespace.
 char* getCleanLine(char* in)
 {
@@ -78,8 +82,27 @@ void getJump(char* in, char* out)
 //Takes a clean line and returns the memory address.
 void getSymbolValue(char* in, char* out)
 {
-	strncpy(out,in+1, 5);
-	out[5] = '\0';
+	if(isdigit(in[1]))
+	{
+		strncpy(out,in+1, 5);
+		out[5] = '\0';
+	}
+	else
+	{
+		findOrCreateSymbol(in+1, out);
+	}
+}
+
+//Initialize the symbol table
+void setupParserSymbolTable()
+{
+	setupSymbolTable(&symbolListHead, &symbolListTail);
+}
+
+//Clean up the parser table
+void cleanupParserSymbolTable()
+{
+	cleanupSymbolTable(&symbolListHead);
 }
 
 //Takes a clean line and returns a ParsedCommand struct
@@ -90,7 +113,6 @@ struct ParsedCommand* getParsedCommand(char* in)
 	
 	if(p->ct == A_TYPE)
 	{
-		p->symbol = NULL;
 		getSymbolValue(in, p->memLocation);
 	}
 	if(p->ct == C_TYPE)
@@ -112,7 +134,51 @@ enum CommandType getCommandType(char* in)
 	return C_TYPE;
 }
 
+//Clean up a ParsedCommand
 void freeParsedCommand(struct ParsedCommand* p)
 {
 	free(p);
 }
+
+//Finds a symbol in the symbol table or creates a new one
+void findOrCreateSymbol(char* in, char* out)
+{
+	struct symbolList* curr = symbolListHead;
+	while (curr != NULL)
+	{
+		if (strcmp(curr->symbol, in) == 0)
+		{
+			snprintf(out, 6, "%d", curr->val);
+			return;
+		}
+		curr = curr->next;
+	}
+	struct symbolList* new = malloc(sizeof(struct symbolList));
+	new->symbol = malloc(strlen(in) + 1);
+	strcpy(new->symbol, in);
+	new->val = nextMem++;
+	new->next = NULL;
+	
+	symbolListTail->next = new;
+	symbolListTail = new;
+	snprintf(out, 6, "%d", new->val);
+}
+
+//Adds labels to the symbol table
+void processLabel(char* cleanLine, int lineCount)
+{
+	int len = strchr(cleanLine, ')') - cleanLine;
+	char* label = malloc(len);
+	strncpy(label, cleanLine+1, len-1);
+	label[len-1] = '\0';
+	
+	struct symbolList* new = malloc(sizeof(struct symbolList ));
+	new-> symbol = label;
+	new-> val = lineCount;
+	new->next = NULL;
+	symbolListTail->next = new;
+	symbolListTail = new;
+}
+
+
+

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "list.h"
 
 char* getCleanLine(char* in);
 void getDest(char* in, char* out);
@@ -14,6 +15,10 @@ void getSymbolValue(char* in, char* out);
 enum CommandType getCommandType(char* in);
 struct ParsedCommand* getParsedCommand(char* in);
 void freeParsedCommand(struct ParsedCommand* p);
+void findOrCreateSymbol(char* in, char* out);
+void processLabel(char* cleanLine, int lineCount);
+void setupParserSymbolTable();
+void cleanupParserSymbolTable();
 
 enum CommandType {
 	C_TYPE,
@@ -23,7 +28,6 @@ enum CommandType {
 
 struct ParsedCommand {
 	enum CommandType ct;
-	char* symbol;
 	char memLocation[6];
 	char dest[4];
 	char comp[4];

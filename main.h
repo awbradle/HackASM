@@ -6,6 +6,16 @@
 #include <string.h>
 
 #include "code.h"
-#include "parser.h"
+#include "list.h"
+
+void handleFileIO(FILE** in, FILE** out, char* inName);
+void cleanInput(FILE* in, FILE* out);
+void writeOut(FILE* out);
+
+struct list 
+{
+	struct list* next;
+	char* line;
+};
 
 #endif
